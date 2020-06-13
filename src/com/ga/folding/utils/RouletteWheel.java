@@ -1,4 +1,4 @@
-package com.ga.folding;
+package com.ga.folding.utils;
 
 import java.util.ArrayList;
 import java.util.List;

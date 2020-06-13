@@ -1,7 +1,7 @@
 package com.ga.folding.draw;
 
-import com.ga.folding.Protein.Molecule;
-import com.ga.folding.Protein.Protein;
+import com.ga.folding.protein.Molecule;
+import com.ga.folding.protein.Protein;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;

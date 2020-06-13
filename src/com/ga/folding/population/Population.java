@@ -1,10 +1,10 @@
-package com.ga.folding;
+package com.ga.folding.population;
 
-import com.ga.folding.Protein.Molecule;
-import com.ga.folding.Protein.Protein;
+import com.ga.folding.protein.Molecule;
+import com.ga.folding.protein.Protein;
 import com.ga.folding.draw.Graphics;
+import com.ga.folding.utils.RouletteWheel;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 

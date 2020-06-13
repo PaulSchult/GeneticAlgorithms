@@ -1,4 +1,4 @@
-package com.ga.folding.Protein;
+package com.ga.folding.protein;
 
 import java.util.ArrayList;
 import java.util.List;

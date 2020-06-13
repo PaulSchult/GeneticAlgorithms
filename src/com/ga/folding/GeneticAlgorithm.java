@@ -1,6 +1,7 @@
 package com.ga.folding;
 
-import com.ga.folding.Protein.Protein;
+import com.ga.folding.protein.Protein;
+import com.ga.folding.population.Population;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;

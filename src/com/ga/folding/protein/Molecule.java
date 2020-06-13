@@ -1,4 +1,4 @@
-package com.ga.folding.Protein;
+package com.ga.folding.protein;
 
 public class Molecule {
 
