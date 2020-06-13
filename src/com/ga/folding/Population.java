@@ -1,6 +1,10 @@
 package com.ga.folding;
 
+import com.ga.folding.Protein.Molecule;
+import com.ga.folding.Protein.Protein;
+import com.ga.folding.draw.Graphics;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 
@@ -21,22 +25,24 @@ public class Population {
 
   public double evaluateFitness() {
 
+    System.out.println("EVALUTATINO");
+
+    avgFitness = 0;
+    totalFitness = 0;
+
     for(Protein p : proteinList) {
 
-      double fitness = p.calculateFitness();
-      avgFitness += fitness;
+      double currentFitness = p.calculateFitness();
+      totalFitness += currentFitness;
 
-      if(fitness > bestFitness) {
-        bestFitness = fitness;
+      if(currentFitness > bestFitness) {
+        bestFitness = currentFitness;
         bestProtein = p;
       }
-      System.out.println("Fitness: " + fitness);
 
     }
-    // used only for calculation of probability
-    totalFitness = avgFitness;
 
-    avgFitness /= proteinList.size();
+    avgFitness = totalFitness / proteinList.size();
     System.out.println("Average Fitness: " + avgFitness);
 
     return avgFitness;
@@ -59,6 +65,14 @@ public class Population {
     return bestProtein;
   }
 
+  public void drawProtein(int generationId) {
+
+    for(int pId = 0; pId < proteinList.size(); pId++) {
+      Graphics g = new Graphics(proteinList.get(pId), generationId, pId);
+    }
+
+  }
+
   public void selection() {
     RouletteWheel rouletteWheel = new RouletteWheel();
 
@@ -72,9 +86,9 @@ public class Population {
 
     List<Protein> newGenerationList = new ArrayList<Protein>();
 
-    for(int i = 0; i < 5; i++) {
+    for(int i = 0; i < proteinList.size(); i++) {
       int index = rouletteWheel.spin();
-      newGenerationList.add(proteinList.get(index));
+      newGenerationList.add(new Protein(proteinList.get(index)));
     }
 
     proteinList = newGenerationList;
@@ -94,7 +108,7 @@ public class Population {
       int r = random.nextInt(100);
       //System.out.println(r);
       if(r == 1) {
-        System.out.println("Mutated: ");
+        //System.out.println("Mutated: ");
         p.mutate();
       }
 
@@ -110,10 +124,109 @@ public class Population {
 
     if(r == 1) {
 
-      
+      int firstProteinId  = random.nextInt(proteinList.size());
+      int secondProteinId = random.nextInt(proteinList.size());
+      while(secondProteinId == firstProteinId) {
+        secondProteinId = random.nextInt(proteinList.size());
+      }
+
+      Protein firstProtein  = proteinList.get(firstProteinId);
+      Protein secondProtein = proteinList.get(secondProteinId);
+
+      // create copies of protein object
+      Protein firstProteinCopy  = new Protein(firstProtein);
+      Protein secondProteinCopy = new Protein(secondProtein);
+
+      int cuttingPos = random.nextInt(firstProtein.getMolecules().size());
+
+      // get the correct section that needs to be cut
+      List<Molecule> firstTmpMolecules  = firstProteinCopy.getMolecules().subList(0, cuttingPos);
+      List<Molecule> secondTmpMolecules = secondProteinCopy.getMolecules().subList(0, cuttingPos);
+
+      for(int i = 0; i < cuttingPos; i++) {
+        firstProtein.setMolecule(i, secondTmpMolecules.get(i));
+        secondProtein.setMolecule(i, firstTmpMolecules.get(i));
+      }
+
 
     }
 
+  }
+
+  public void tournamentSelection(double tournamentThreshold) {
+
+    for(Protein protein : proteinList) {
+     // protein.calculateFitness();
+    }
+
+    List<Protein> nextGeneration = new ArrayList<>();
+
+    for(int round = 0; round < proteinList.size(); round++) {
+
+      Random random = new Random();
+      // pick random number where 2 <= numberOfFighter <= proteinList.size()
+      // picks number between 0 and proteinList.size()-2
+      // => add 2 afterwards to make the range 2 to proteinList.size()
+      int numberOfFighter = random.nextInt(proteinList.size() - 2);
+      numberOfFighter += 2;
+
+      List<Protein> tournamentFighter = new ArrayList<>();
+
+      for (int i = 0; i < numberOfFighter; i++) {
+        boolean validFighter = false;
+        while (!validFighter) {
+          int proteinId = random.nextInt(proteinList.size());
+          // avoid identical proteins
+          if (!tournamentFighter.contains(proteinList.get(proteinId))) {
+            tournamentFighter.add(proteinList.get(proteinId));
+            validFighter = true;
+          }
+        }
+      }
+
+      // select random number between 0 and 1
+      double r = random.nextDouble();
+      if (r < tournamentThreshold) {
+        nextGeneration.add(pickBestCandidate(tournamentFighter));
+      } else {
+        nextGeneration.add(pickWorstCandidate(tournamentFighter));
+      }
+    }
+
+    proteinList = nextGeneration;
+
+  }
+
+  private Protein pickBestCandidate(List<Protein> tournamentFighter) {
+
+    double bestFitness = 0;
+    Protein bestProtein = null;
+
+    for(Protein protein : tournamentFighter) {
+      double currentFitness = protein.getFitness();
+      if(currentFitness > bestFitness) {
+        bestFitness = currentFitness;
+        bestProtein = protein;
+      }
+    }
+
+    return new Protein(bestProtein);
+  }
+
+  private Protein pickWorstCandidate(List<Protein> tournamentFighter) {
+
+    double worstFitness = 10000;
+    Protein worstProtein = null;
+
+    for(Protein protein : tournamentFighter) {
+      double currentFitness = protein.getFitness();
+      if(currentFitness < worstFitness) {
+        worstFitness = currentFitness;
+        worstProtein = protein;
+      }
+    }
+
+    return new Protein(worstProtein);
   }
 
 }

@@ -14,7 +14,17 @@ public class Main {
 
         /************/
 
-        System.out.println("Hello World!");
+
+
+
+
+
+
+
+
+
+        //Graphics graphics = new Graphics();
+
 
         // 0 = white, hydrophilic
         // 1 = black, hydrophobic

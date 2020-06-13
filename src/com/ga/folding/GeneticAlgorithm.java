@@ -1,15 +1,10 @@
 package com.ga.folding;
 
-import java.io.File;
-import java.io.FileNotFoundException;
+import com.ga.folding.Protein.Protein;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collector;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class GeneticAlgorithm {
 
@@ -18,7 +13,7 @@ public class GeneticAlgorithm {
   private int currentGeneration;
   private double populationFitness;
 
-  private Protein bestProtein;
+  private Protein overallBestProtein;
 
   private String acidString;
   private Population population;
@@ -37,7 +32,8 @@ public class GeneticAlgorithm {
     createRandomPopulation();
     populationFitness = population.evaluateFitness();
 
-    bestProtein = population.getBestProtein();
+    overallBestProtein = population.getBestProtein();
+    population.drawProtein(currentGeneration);
 
     createCSV();
 
@@ -48,17 +44,22 @@ public class GeneticAlgorithm {
       System.out.println("----------- New Population -----------");
       System.out.println("--------------------------------------");
 
-      if(population.getBestProtein().getFitness() > bestProtein.getFitness()) {
-        bestProtein = population.getBestProtein();
-      }
 
-      population.selection();
-      population.crossover();
-      population.mutation();
+
+      //population.selection();
+      //population.crossover();
+      //population.mutation();
+      population.tournamentSelection(0.75);
 
       populationFitness = population.evaluateFitness();
-      bestProtein = population.getBestProtein();
 
+      if(population.getBestProtein().getFitness() > overallBestProtein.getFitness()) {
+        overallBestProtein = population.getBestProtein();
+      }
+
+      //overallBestProtein = population.getBestProtein();
+
+      population.drawProtein(currentGeneration);
       createCSV();
       //createRandomPopulation();
       //populationFitness = population.evaluateFitness();
@@ -72,13 +73,13 @@ public class GeneticAlgorithm {
     allData.add(population.getData());
     // set currentGeneration field
     allData.get(currentGeneration)[0] = currentGeneration+"";
-    allData.get(currentGeneration)[3] = bestProtein.getFitness()+"";
-    allData.get(currentGeneration)[4] = bestProtein.getNoOfHHBonds()+"";
-    allData.get(currentGeneration)[5] = bestProtein.getNoOfOverlappings()+"";
+    allData.get(currentGeneration)[3] = overallBestProtein.getFitness()+"";
+    allData.get(currentGeneration)[4] = overallBestProtein.getNoOfHHBonds()+"";
+    allData.get(currentGeneration)[5] = overallBestProtein.getNoOfOverlappings()+"";
 
 
     try {
-      FileWriter csvWriter = new FileWriter("/tmp/log.csv");
+      FileWriter csvWriter = new FileWriter("/tmp/paul/ga/log.csv");
 
       csvWriter.append("Generation Number, Average Fitness, Fitness of best candidate, Fitness of overall best candidate, Its number H/H Bonds, Its number of Overlappings \n");
 
@@ -106,7 +107,7 @@ public class GeneticAlgorithm {
       Protein protein = new Protein(acidString);
       protein.createRandomFolding();
       //protein.printFolding();
-
+      //protein.useTestFolding("1r-0u-1u-0l-0d-1l-1u-0l-1u-0l-0d-1d-0r-1d-1l-0d-0r-1r-0u-1r-1r");
       population.addProtein(protein);
     }
 
