@@ -179,7 +179,7 @@ public class Protein {
         Molecule m = foldedAcidWithPos.get(j);
 
         // equality check && check if not the prev && charge must be hydrophobic for H/H Bond
-        if(molecule != m && molecule.getPrevMolecule() != m && m.getCharge() == '1' && molecule.getCharge() == '1') {
+        if(molecule != m && molecule.getPrevMolecule() != m) {
 
           if(x_pos == m.getX_Pos() && y_pos == m.getY_Pos()) {
             noOfOverlappings += 1;
@@ -190,26 +190,28 @@ public class Protein {
           // it may find another H/H Bond which we don't want to count
           if(!overlappingFound) {
 
-            // check right side
-            if (x_pos + 1 == m.getX_Pos() && y_pos == m.getY_Pos()) {
-              noOfHHBonds += 1;
-            }
+            if(m.getCharge() == '1' && molecule.getCharge() == '1') {
+              // check right side
+              if (x_pos + 1 == m.getX_Pos() && y_pos == m.getY_Pos()) {
+                noOfHHBonds += 1;
+              }
 
-            // check left side
-            if (x_pos - 1 == m.getX_Pos() && y_pos == m.getY_Pos()) {
-              noOfHHBonds += 1;
+              // check left side
+              if (x_pos - 1 == m.getX_Pos() && y_pos == m.getY_Pos()) {
+                noOfHHBonds += 1;
 
-            }
+              }
 
-            // check top side
-            if (x_pos == m.getX_Pos() && y_pos + 1 == m.getY_Pos()) {
-              noOfHHBonds += 1;
+              // check top side
+              if (x_pos == m.getX_Pos() && y_pos + 1 == m.getY_Pos()) {
+                noOfHHBonds += 1;
 
-            }
+              }
 
-            // check bottom side
-            if (x_pos == m.getX_Pos() && y_pos - 1 == m.getY_Pos()) {
-              noOfHHBonds += 1;
+              // check bottom side
+              if (x_pos == m.getX_Pos() && y_pos - 1 == m.getY_Pos()) {
+                noOfHHBonds += 1;
+              }
             }
 
           }
@@ -277,9 +279,20 @@ public class Protein {
     //System.out.println("index: " + indexToMutate);
 
     char newDirection = directions.charAt(random.nextInt(directions.length()));
-    //char oldDirection = foldedAcid.get(indexToMutate).getDirection();
+    //System.out.println("Index: " + indexToMutate);
+    //System.out.println("Old Direction: " + foldedAcid.get(indexToMutate).getDirection());
+    for(Molecule m : this.foldedAcid) {
+      //System.out.print(m.getCharge() + "" + m.getDirection() + " ");
+    }
 
     foldedAcid.get(indexToMutate).setDirection(newDirection);
+    //System.out.println("New Direction: " + newDirection);
+    for(Molecule m : this.foldedAcid) {
+      //System.out.print(m.getCharge() + "" + m.getDirection() + " ");
+    }
+
+    //char oldDirection = foldedAcid.get(indexToMutate).getDirection();
+
     //foldedAcid.set(indexToMutate, foldedAcid.get(indexToMutate).replace(oldDirection, newDirection));
   }
 

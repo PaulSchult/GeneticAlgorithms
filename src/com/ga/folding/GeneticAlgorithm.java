@@ -12,6 +12,7 @@ public class GeneticAlgorithm {
   private int maxGeneration;
   private int popSize;
   private int currentGeneration;
+  private int mutationRate;
   private double populationFitness;
 
   private Protein overallBestProtein;
@@ -23,7 +24,9 @@ public class GeneticAlgorithm {
   public GeneticAlgorithm(int maxGeneration, String acidString) {
     this.maxGeneration = maxGeneration;
     this.currentGeneration = 0;
-    this.popSize = 5;
+    this.popSize = 50;
+    // in %
+    this.mutationRate = 1;
     this.acidString = acidString;
 
     start();
@@ -38,21 +41,40 @@ public class GeneticAlgorithm {
 
     createCSV();
 
+    int sameFitnessCnt = 0;
+    double prevFitness = 0;
+
     while(currentGeneration < maxGeneration) {
       currentGeneration++;
 
       System.out.println("--------------------------------------");
       System.out.println("----------- New Population -----------");
+      System.out.println("------------ Generation " + currentGeneration + " ------------");
       System.out.println("--------------------------------------");
 
 
+      population.selection();
+      population.crossover();
+      population.mutation(mutationRate);
+      //population.tournamentSelection(0.75);
 
-      //population.selection();
-      //population.crossover();
-      //population.mutation();
-      population.tournamentSelection(0.75);
-
+      prevFitness = populationFitness;
       populationFitness = population.evaluateFitness();
+
+      // if the fitness is the same as the previous generation increase counter
+      // otherwise reset the counter and the mutation rate
+      if(prevFitness == populationFitness) {
+        sameFitnessCnt++;
+      } else {
+        sameFitnessCnt = 0;
+        mutationRate = 1;
+      }
+
+      // if the fitness doesn't change for 5 continuous generations, we assume that a local maximum is reached
+      // => increase the mutation rate to 50%
+      if(sameFitnessCnt == 3) {
+        mutationRate = 50;
+      }
 
       if(population.getBestProtein().getFitness() > overallBestProtein.getFitness()) {
         overallBestProtein = population.getBestProtein();
@@ -60,7 +82,7 @@ public class GeneticAlgorithm {
 
       //overallBestProtein = population.getBestProtein();
 
-      population.drawProtein(currentGeneration);
+      //population.drawProtein(currentGeneration);
       createCSV();
       //createRandomPopulation();
       //populationFitness = population.evaluateFitness();

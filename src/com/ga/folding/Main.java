@@ -9,7 +9,7 @@ public class Main {
         String acid = "10100110100101100101"; // to be folded
         /************/
 
-        GeneticAlgorithm ga = new GeneticAlgorithm(5, acid);
+        GeneticAlgorithm ga = new GeneticAlgorithm(50, acid);
 
         /************/
 

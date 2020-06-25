@@ -25,8 +25,6 @@ public class Population {
 
   public double evaluateFitness() {
 
-    System.out.println("EVALUTATINO");
-
     avgFitness = 0;
     totalFitness = 0;
 
@@ -99,7 +97,7 @@ public class Population {
 
   }
 
-  public void mutation() {
+  public void mutation(int mutationRate) {
 
     for(Protein p : proteinList) {
 
@@ -107,8 +105,8 @@ public class Population {
       // 1% chance to mutate
       int r = random.nextInt(100);
       //System.out.println(r);
-      if(r == 1) {
-        //System.out.println("Mutated: ");
+      if(r <= mutationRate) {
+        //System.out.println("Mutated: " + p.getMolecules());
         p.mutate();
       }
 

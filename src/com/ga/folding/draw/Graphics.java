@@ -137,7 +137,15 @@ public class Graphics {
 
 
     }
-
+    
+    label = protein.getFitness() + "";
+    g2.drawString("Fitness: " + label, 10, 50);
+    label = protein.getNoOfHHBonds() + "";
+    g2.drawString("NoOfHHBonds: " + label, 10, 100);
+    label = protein.getNoOfOverlappings() + "";
+    g2.drawString("NoOfOverlappings: " + label, 10, 150);
+    
+    
     String folder = "/tmp/paul/ga/generation_" + generationId;
     String filename = "protein_" + proteinId + ".png";
     if (new File(folder).exists() == false)
